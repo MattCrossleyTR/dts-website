@@ -1,24 +1,29 @@
 from datetime import datetime
+import re
 from uuid import UUID, uuid4
 
 from sqlmodel import Field, SQLModel
-from pydantic import StringConstraints
+from pydantic import StringConstraints, field_validator
 from typing import Annotated
 
-USERNAME_PASSWORD_REGEX = r"^\S+$"
-"""Regex for valid username/password chars"""
-
 Username = Annotated[
-    str, StringConstraints(min_length=5, max_length=64, pattern=USERNAME_PASSWORD_REGEX)
+    str, StringConstraints(min_length=5, max_length=64)
 ]
 Password = Annotated[
     str,
-    StringConstraints(min_length=8, max_length=128, pattern=USERNAME_PASSWORD_REGEX),
+    StringConstraints(min_length=8, max_length=128),
 ]
+
+def whitespace_filter(v: str):
+    # imlpement seperate whitespace filter from string constraints for better error message
+    if re.search(r'\s', v):
+        raise ValueError('Invalid characters found in input. Cannot contain whitespace')
+    return v
 
 
 class UserBase(SQLModel):
     username: Username = Field(index=True, unique=True)
+    username_filter = field_validator('username')(whitespace_filter)
 
 
 class User(UserBase, table=True):
@@ -26,15 +31,21 @@ class User(UserBase, table=True):
     password: Password
     admin: bool = Field(default=False)
 
+    password_filter = field_validator('password')(whitespace_filter)
+
 
 class UserCreate(UserBase):
     password: Password = Field(min_length=8, max_length=128)
     admin: bool = False
 
+    password_filter = field_validator('password')(whitespace_filter)
+
 
 class UserUpdate(UserBase):
     username: Username | None = Field(default=None)
     password: Password | None = Field(default=None)
+
+    password_filter = field_validator('password')(whitespace_filter)
 
 
 class UserPublic(UserBase):
