@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
-import { setAuth } from "../utils/auth";
+import { setAuth, calculatePasswordStrength } from "../utils/auth";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState("Weak");
   const [isAdmin, setIsAdmin] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -68,9 +69,13 @@ export default function Register() {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setPasswordStrength(calculatePasswordStrength(e.target.value))
+            }}
           />
         </div>
+        <span>Password Strength: {passwordStrength}</span>
         <div>
           <label htmlFor="password">Confirm Password:</label>
           <input
