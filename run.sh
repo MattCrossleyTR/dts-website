@@ -28,11 +28,12 @@ cleanup() {
 trap cleanup INT TERM EXIT
 
 cd frontend
-npm run start &
+npm run start > /dev/null &
 pids+=("$!")
 
 cd ../backend
-python -m fastapi main.py &
+source ../.venv/bin/activate
+python -m fastapi run src/main.py &
 pids+=("$!")
 
 echo "Started:"
