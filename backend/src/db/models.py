@@ -2,26 +2,39 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from sqlmodel import Field, SQLModel
+from pydantic import StringConstraints
+from typing import Annotated
+
+USERNAME_PASSWORD_REGEX = r"^\S+$"
+"""Regex for valid username/password chars"""
+
+Username = Annotated[
+    str, StringConstraints(min_length=5, max_length=64, pattern=USERNAME_PASSWORD_REGEX)
+]
+Password = Annotated[
+    str,
+    StringConstraints(min_length=8, max_length=128, pattern=USERNAME_PASSWORD_REGEX),
+]
 
 
 class UserBase(SQLModel):
-    username: str = Field(index=True, unique=True, min_length=5, max_length=128)
+    username: Username = Field(index=True, unique=True)
 
 
 class User(UserBase, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True, index=True, unique=True)
-    password: str = Field(min_length=5, max_length=128)
+    password: Password
     admin: bool = Field(default=False)
 
 
 class UserCreate(UserBase):
-    password: str = Field(min_length=8, max_length=128)
+    password: Password = Field(min_length=8, max_length=128)
     admin: bool = False
 
 
 class UserUpdate(UserBase):
-    username: str | None = Field(default=None, min_length=5, max_length=128)
-    password: str | None = Field(default=None, min_length=5, max_length=128)
+    username: Username | None = Field(default=None)
+    password: Password | None = Field(default=None)
 
 
 class UserPublic(UserBase):

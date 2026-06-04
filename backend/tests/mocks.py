@@ -20,6 +20,12 @@ class MockSessionOrTable:
     def commit(self):
         return None
 
+    def add(self, item):
+        return None
+
+    def refresh(self, item):
+        return None
+
 
 @dataclass
 class MockCredentials:
