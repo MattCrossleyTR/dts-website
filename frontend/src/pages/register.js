@@ -6,7 +6,7 @@ import { setAuth, calculatePasswordStrength } from "../utils/auth";
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordStrength, setPasswordStrength] = useState("Weak");
+  const [passwordStrength, setPasswordStrength] = useState("Too Weak");
   const [isAdmin, setIsAdmin] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -72,11 +72,19 @@ export default function Register() {
             value={password}
             onChange={(e) => {
               setPassword(e.target.value)
+              const strength = calculatePasswordStrength(e.target.value)
               setPasswordStrength(calculatePasswordStrength(e.target.value))
+              if (strength.indexOf("Weak") === -1) {
+                document.querySelector("#strength-indicator").className = ""
+                document.querySelector('button[type=submit]').disabled = false
+              } else {
+                document.querySelector("#strength-indicator").className = "error-message"
+                document.querySelector('button[type=submit]').disabled = true
+              }
             }}
           />
         </div>
-        <span>Password Strength: {passwordStrength}</span>
+        <span id="strength-indicator">Password Strength: {passwordStrength}</span>
         <div>
           <label htmlFor="password">Confirm Password:</label>
           <input
@@ -96,7 +104,7 @@ export default function Register() {
             User is admin
           </label>
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" disabled>Register</button>
         <span className="error-message">{error}</span>
       </form>
     </div>

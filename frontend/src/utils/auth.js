@@ -28,7 +28,7 @@ export function clearAuth() {
 export function calculatePasswordStrength(pwd) {
   const minLength = 8
   if (pwd.length < minLength) {
-    return "Weak"
+    return "Too Weak"
   }
   let score = 0;
   // add a point for every additional 4 chars after the min length of 8
@@ -71,7 +71,7 @@ export function calculatePasswordStrength(pwd) {
   if (score <= 8) {
     // requires minimal length password with a small char variation
     // eg: twentytwo
-    return "Weak"
+    return "Too Weak"
   } else if (score <= 14) {
     // minimal length but more char type variation
     // eg: Twenty26
