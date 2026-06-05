@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -21,6 +22,8 @@ router = APIRouter(tags=["auth"])
 SECRET_KEY = secrets.token_bytes(32)
 ALGORITHM = "HS256"
 TOKEN_EXPIRY_MINUTES = 60
+# generated with openssl
+PEPPER = '9aa8fc47a0fe5fbdb4b089fe4a15006fc75ee36e0de2bb5f40cd29820d8823cd'
 
 
 def create_token(user: User):
@@ -35,19 +38,35 @@ def create_token(user: User):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+def hash_password(password: str, salt: bytes | None = None):
+    if salt is None:
+        salt = secrets.token_bytes(32)
+    hashed = hashlib.pbkdf2_hmac('sha256', password.encode() + PEPPER.encode(), salt, 600_000)
+    return salt + hashed
+
+
+def verify_password(user: User, password: str):
+    salt = user.password[:32]
+    return hash_password(password, salt) == user.password
+
+
 @router.post("/token")
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: DBSessionDep
 ):
     user = session.exec(
         select(User).where(
-            User.username == form_data.username and User.password == form_data.password
+            User.username == form_data.username
         )
     ).one_or_none()
 
     if not user:
         logger.warning(f"Token issue failed for user {form_data.username}")
         raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    if not verify_password(user, form_data.password):
+        logger.warning(f'invalid password for user {user.id}')
+        raise HTTPException(401, 'Invalid credentials')
 
     return create_token(user)
 

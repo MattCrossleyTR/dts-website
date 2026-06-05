@@ -1,6 +1,6 @@
 import logging
 
-from ..auth import AuthCheckDep, create_token
+from ..auth import AuthCheckDep, create_token, hash_password
 from ..db import DBSessionDep
 from ..db.models import User, UserCreate, UserPublic, UserUpdate
 from fastapi import APIRouter, HTTPException
@@ -19,19 +19,10 @@ def create_user(user_details: UserCreate, session: DBSessionDep) -> str:
     ).one_or_none()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already exists")
-    password_in_use_by = session.exec(
-        select(User.username).where(User.password == user_details.password)
-    ).one_or_none()
-    if password_in_use_by:
-        # insanely bad practice but funny lmao
-        raise HTTPException(
-            status_code=400,
-            detail=f"Password already in use by {password_in_use_by}. Please choose another password.",
-        )
 
     user = User(
         username=user_details.username,
-        password=user_details.password,
+        password=hash_password(user_details.password),
         admin=user_details.admin,
     )
     session.add(user)
@@ -94,7 +85,7 @@ def update_user(
     if user_details.username:
         user_to_update.username = user_details.username
     if user_details.password:
-        user_to_update.password = user_details.password
+        user_to_update.password = hash_password(user_details.password)
     session.commit()
     session.refresh(user_to_update)
     logger.info(f"User {user_to_update.username} updated with ID {user_to_update.id}")

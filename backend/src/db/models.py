@@ -9,10 +9,6 @@ from typing import Annotated
 Username = Annotated[
     str, StringConstraints(min_length=5, max_length=64)
 ]
-Password = Annotated[
-    str,
-    StringConstraints(min_length=8, max_length=128),
-]
 
 def whitespace_filter(v: str):
     # imlpement seperate whitespace filter from string constraints for better error message
@@ -28,14 +24,12 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True, index=True, unique=True)
-    password: Password
+    password: bytes
     admin: bool = Field(default=False)
-
-    password_filter = field_validator('password')(whitespace_filter)
 
 
 class UserCreate(UserBase):
-    password: Password = Field(min_length=8, max_length=128)
+    password: str = Field(min_length=8, max_length=128)
     admin: bool = False
 
     password_filter = field_validator('password')(whitespace_filter)
@@ -43,7 +37,7 @@ class UserCreate(UserBase):
 
 class UserUpdate(UserBase):
     username: Username | None = Field(default=None)
-    password: Password | None = Field(default=None)
+    password: str | None = Field(default=None)
 
     password_filter = field_validator('password')(whitespace_filter)
 
