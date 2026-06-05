@@ -1,3 +1,4 @@
+import collections
 import hashlib
 import logging
 import secrets
@@ -54,6 +55,10 @@ def verify_password(user: User, password: str):
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: DBSessionDep
 ):
+    if check_excessive_failed_access(form_data.username):
+        logging.warning(f'Access denied for user {form_data.username} - too many failed attempts')
+        raise HTTPException(429, 'Too many invalid attempts')
+
     user = session.exec(
         select(User).where(
             User.username == form_data.username
@@ -61,10 +66,12 @@ async def login(
     ).one_or_none()
 
     if not user:
-        logger.warning(f"Token issue failed for user {form_data.username}")
+        register_failed_access(form_data.username)
+        logger.warning(f"Token issue failed for user {form_data.username} - user does not exist")
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     if not verify_password(user, form_data.password):
+        register_failed_access(form_data.username)
         logger.warning(f'invalid password for user {user.id}')
         raise HTTPException(401, 'Invalid credentials')
 
@@ -99,3 +106,30 @@ async def auth_check(
 
 
 AuthCheckDep = Annotated[User, Depends(auth_check)]
+
+
+FAILED_ACCESS: dict[str, collections.deque] = {}
+# allow max of 20 attemts over an hour
+MAX_ACCESS_ATTEMPTS = 20
+MAX_ACCESS_TIMESPAN_MINUTES = 60
+
+def register_failed_access(username: str):
+    if username not in FAILED_ACCESS:
+        FAILED_ACCESS[username] = collections.deque([], MAX_ACCESS_ATTEMPTS)
+    # append to the right, so oldest attempt on left at index [0]
+    FAILED_ACCESS[username].append(datetime.now(timezone.utc))
+
+
+def check_excessive_failed_access(username: str):
+    # if no failed access attempts so far
+    if username not in FAILED_ACCESS:
+        return False
+    # if not at max attempts
+    if len(FAILED_ACCESS[username]) < MAX_ACCESS_ATTEMPTS:
+        return False
+    # if first attempt not in the 1 hour span
+    earliest_allowed_time = datetime.now(timezone.utc) - timedelta(minutes=MAX_ACCESS_TIMESPAN_MINUTES)
+    if FAILED_ACCESS[username][0] <= earliest_allowed_time:
+        return False
+    return True
+
