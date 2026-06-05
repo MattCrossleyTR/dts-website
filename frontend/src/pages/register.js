@@ -21,28 +21,29 @@ export default function Register() {
     }
 
     try {
+      const userDetails = {
+        username: username,
+        password: password,
+        admin: isAdmin,
+      }
       const response = await fetch("http://localhost:8000/users/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-          admin: isAdmin,
-        }),
+        body: JSON.stringify(userDetails),
       });
 
       if (response.ok) {
         const userId = await response.json();
-        setAuth({ id: userId, username: username, password: password });
+        setAuth({ ...userDetails, id: userId });
         navigate("/");
       } else {
         let error = (await response.json()).detail;
         if (Array.isArray(error)) {
           error = error[0];
         }
-        setError(error.loc.join(".") + ": " + error.msg);
+        setError(error);
       }
     } catch (error) {
       console.error(error);

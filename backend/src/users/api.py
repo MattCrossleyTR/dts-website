@@ -57,7 +57,7 @@ def read_user(user_id: UUID4, session: DBSessionDep) -> UserPublic:
 
 
 @router.get("/")
-def read_all_users(session: DBSessionDep) -> list[UserPublic]:
+def read_all_users(session: DBSessionDep, user: AuthCheckDep) -> list[UserPublic]:
     users = session.exec(select(User)).all()
     logger.info(f"Retrieved {len(users)} users")
     return users
