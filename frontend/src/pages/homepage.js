@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { getAuth } from "../utils/auth";
+import { getAuthToken } from "../utils/auth";
 import Task from "../components/task";
 import "../styles/task.css";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
-  const auth = getAuth();
 
   useEffect(() => {
     fetch("http://localhost:8000/tasks/", {
       headers: {
-        Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     })
       .then((response) => response.json())

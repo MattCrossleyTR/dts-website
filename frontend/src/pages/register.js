@@ -35,8 +35,8 @@ export default function Register() {
       });
 
       if (response.ok) {
-        const userId = await response.json();
-        setAuth({ ...userDetails, id: userId });
+        const token = await response.json();
+        setAuth(token);
         navigate("/");
       } else {
         let error = (await response.json()).detail;

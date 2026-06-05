@@ -12,17 +12,20 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8000/users/current", {
-        method: "GET",
+      const body = new URLSearchParams();
+      body.append('username', username)
+      body.append('password', password)
+      const response = await fetch("http://localhost:8000/token", {
+        method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+          "Content-Type": "application/x-www-form-urlencoded",
         },
+        body
       });
 
       if (response.ok) {
-        const userData = await response.json();
-        setAuth(userData);
+        const token = await response.json();
+        setAuth(token);
         navigate("/");
       } else {
         document.querySelector(".error-message").textContent =

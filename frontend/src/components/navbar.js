@@ -1,11 +1,11 @@
-import { clearAuth, getAuth } from "../utils/auth";
+import { clearAuth, getAuthPayload } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../styles/navbar.css";
 
 export default function NavBar() {
   const navigate = useNavigate();
-  const auth = getAuth();
+  const auth = getAuthPayload();
 
   function handleLogout() {
     clearAuth();

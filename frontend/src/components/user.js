@@ -1,8 +1,6 @@
-import { getAuth } from "../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 export default function User({ user }) {
-  const currentUser = getAuth();
-
   function handleDelete() {
     if (
       window.confirm(`Are you sure you want to delete user ${user.username}?`)
@@ -10,9 +8,7 @@ export default function User({ user }) {
       fetch(`http://localhost:8000/users/${user.id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Basic ${btoa(
-            `${currentUser.username}:${currentUser.password}`
-          )}`,
+          Authorization: `Bearer ${getAuthToken()}`,
         },
       })
         .then(async (response) => {

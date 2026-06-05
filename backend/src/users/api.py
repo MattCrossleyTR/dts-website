@@ -1,6 +1,6 @@
 import logging
 
-from ..auth import AuthCheckDep
+from ..auth import AuthCheckDep, create_token
 from ..db import DBSessionDep
 from ..db.models import User, UserCreate, UserPublic, UserUpdate
 from fastapi import APIRouter, HTTPException
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post("/")
-def create_user(user_details: UserCreate, session: DBSessionDep) -> UUID4:
+def create_user(user_details: UserCreate, session: DBSessionDep) -> str:
     existing_user = session.exec(
         select(User.username).where(User.username == user_details.username)
     ).one_or_none()
@@ -38,7 +38,7 @@ def create_user(user_details: UserCreate, session: DBSessionDep) -> UUID4:
     session.commit()
     session.refresh(user)
     logger.info(f"User {user.username} created with ID {user.id}")
-    return user.id
+    return create_token(user)
 
 
 @router.get("/current")
@@ -72,7 +72,7 @@ def delete_user(user_id: UUID4, session: DBSessionDep, user: AuthCheckDep) -> No
 
     if not user.admin:
         logger.warning(
-            f"User {user_to_delete.username} not authorized to delete user with ID {user_id}"
+            f"User {user_to_delete.username} not authorized to delete user with ID {user_id}"  # fix?
         )
         raise HTTPException(
             status_code=403,

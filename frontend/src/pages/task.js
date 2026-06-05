@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAuth } from "../utils/auth";
+import { getAuthToken, getAuthPayload } from "../utils/auth";
 
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/task.css";
@@ -9,7 +9,7 @@ export default function TaskPage() {
   const [task, setTask] = useState({});
   const [users, setUsers] = useState([]);
   const [creator, setCreator] = useState(null);
-  const auth = getAuth();
+  const auth = getAuthPayload();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,14 +22,14 @@ export default function TaskPage() {
           completed: false,
           due: null,
           assigned_to: null,
-          created_by: auth.id,
+          created_by: auth.sub,
           created_at: new Date().toString(),
         });
       });
     } else {
       request = fetch(`http://localhost:8000/tasks/${taskId}`, {
         headers: {
-          Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+          Authorization: `Bearer ${getAuthToken()}`,
         },
       }).then((response) => response.json());
     }
@@ -43,7 +43,7 @@ export default function TaskPage() {
       .then((task) => {
         fetch("http://localhost:8000/users/", {
           headers: {
-            Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+            Authorization: `Bearer ${getAuthToken()}`,
           },
         })
           .then((response) => response.json())
@@ -66,7 +66,7 @@ export default function TaskPage() {
       request = fetch(`http://localhost:8000/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+          Authorization: `Bearer ${getAuthToken()}`,
         },
       }).then(async (response) => {
         if (response.ok) {
@@ -91,7 +91,7 @@ export default function TaskPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+            Authorization: `Bearer ${getAuthToken()}`,
           },
           body: JSON.stringify(task),
         });
@@ -100,7 +100,7 @@ export default function TaskPage() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+            Authorization: `Bearer ${getAuthToken()}`,
           },
           body: JSON.stringify(task),
         });

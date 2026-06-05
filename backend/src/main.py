@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from .auth import auth_check
+from .auth import auth_check, router as auth_router
 from .db import startup as db_startup
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,5 +42,6 @@ def startup():
     logger.info("Startup complete.")
 
 
+app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(tasks_router, dependencies=[Depends(auth_check)])

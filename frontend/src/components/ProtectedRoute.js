@@ -1,16 +1,16 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { getAuth, setAuth } from "../utils/auth";
+import { getAuthToken, setAuth } from "../utils/auth";
 
 export default function ProtectedRoute({ children }) {
   const location = useLocation();
-  const auth = getAuth();
+  const token = getAuthToken();
 
-  if (auth) {
+  if (token) {
     fetch("http://localhost:8000/users/current", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`,
+        Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
       if (!response.ok) {
@@ -23,12 +23,12 @@ export default function ProtectedRoute({ children }) {
   }
 
   // If not authenticated and not already on login page, redirect to login
-  if (!auth && location.pathname !== "/login") {
+  if (!token && location.pathname !== "/login") {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // If authenticated and on login page, redirect to home
-  if (auth && location.pathname === "/login") {
+  if (token && location.pathname === "/login") {
     return <Navigate to="/" replace />;
   }
 

@@ -1,9 +1,24 @@
-export function setAuth(user) {
-  window.localStorage.setItem("user", JSON.stringify(user));
+export function setAuth(token) {
+  window.localStorage.setItem("token", token);
 }
 
-export function getAuth() {
-  return JSON.parse(window.localStorage.getItem("user"));
+export function getAuthToken() {
+  return window.localStorage.getItem("token");
+}
+
+export function getAuthPayload() {
+  const token = getAuthToken();
+  if (token == "null") {
+    return null
+  }
+
+  const payloadPart = token.split('.')[1]
+  const base64 = payloadPart
+    .replace('/-/g', '+')
+    .replace(/_/g, '/')
+    .padEnd(Math.ceil(payloadPart.length / 4) * 4, "=");
+
+  return JSON.parse(atob(base64))
 }
 
 export function clearAuth() {
