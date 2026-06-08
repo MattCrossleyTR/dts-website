@@ -183,7 +183,13 @@ export default function TaskPage() {
             }
           />
         </div>
-
+        {
+          (task.due && task.due < new Date()) &&
+          <span className="warning-message">
+            You have set a due date in the past. Please double check that this is intentional.
+            If you are recording work that has already been completed, then ignore this message
+          </span>
+        }
         <div>
           <label htmlFor="assigned_to">Assigned To:</label>
           <select

@@ -2,6 +2,10 @@
   color: red;
 }
 
+.warning-message {
+  color: orange;
+}
+
 /* general forms */
 form {
   display: flex;
