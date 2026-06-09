@@ -1,4 +1,4 @@
 -r requirements.txt
-pytest
-pytest-asyncio
-pytest-mock
+pytest>=9.0.3
+pytest-asyncio>=1.4.0
+pytest-mock>=3.15.1
