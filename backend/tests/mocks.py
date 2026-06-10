@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-
-
 class MockSessionOrTable:
     def exec(self, query):
         return self
@@ -26,8 +23,5 @@ class MockSessionOrTable:
     def refresh(self, item):
         return None
 
-
-@dataclass
-class MockCredentials:
-    username: str
-    password: str
+    def one_or_none(self):
+        return None
