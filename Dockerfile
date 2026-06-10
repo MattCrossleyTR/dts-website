@@ -14,8 +14,8 @@ RUN chmod -R 755 /backend/
 WORKDIR /frontend
 RUN npm install && npm run build
 WORKDIR /backend
-RUN python3 -m venv .venv && \
-    . .venv/bin/activate && \
+RUN python3 -m venv ../.venv && \
+    . ../.venv/bin/activate && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
 
@@ -24,5 +24,6 @@ COPY run.sh /run.sh
 EXPOSE 3000
 EXPOSE 8000
 
+WORKDIR /
 ENTRYPOINT ["bash"]
-CMD ["run.sh"]
+CMD ["/run.sh"]

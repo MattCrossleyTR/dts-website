@@ -90,7 +90,7 @@ async def auth_check(
         user_id = UUID(payload.get("sub"))
         if not user_id:
             raise creds_exception
-    except jwt.InvalidTokenError, TypeError:
+    except (jwt.InvalidTokenError, TypeError):
         logging.warning("invalid token submitted for auth")
         raise creds_exception
 
