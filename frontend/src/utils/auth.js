@@ -8,7 +8,7 @@ export function getAuthToken() {
 
 export function getAuthPayload() {
   const token = getAuthToken();
-  if (token === "null") {
+  if (token === "null" || token === null || token === undefined) {
     return null
   }
 
