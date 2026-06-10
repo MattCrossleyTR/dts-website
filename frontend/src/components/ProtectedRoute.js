@@ -11,7 +11,7 @@ export default function ProtectedRoute({ adminOnly = false, children }) {
   useEffect(() => {
     let cancelled = false
 
-    checkAuth(location, token, adminOnly).then(result => {
+    checkAuth(location.pathname, token, adminOnly).then(result => {
       if (!cancelled) setAuthState(result)
     })
 
@@ -33,9 +33,9 @@ export default function ProtectedRoute({ adminOnly = false, children }) {
   return children;
 }
 
-async function checkAuth(location, token, adminOnly) {
+async function checkAuth(urlPath, token, adminOnly) {
   // no auth and not on login screen, send to login screen
-  if (!token && location.pathname !== "/login") {
+  if (!token && urlPath !== "/login") {
     return {
       msg: null,
       path: '/login'
@@ -44,7 +44,7 @@ async function checkAuth(location, token, adminOnly) {
   }
 
   // If authenticated and on login page, redirect to home
-  if (token && location.pathname === "/login") {
+  if (token && urlPath === "/login") {
     return {
       msg: null,
       path: '/'

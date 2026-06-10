@@ -34,7 +34,7 @@ export default function HomePage() {
       }
     })
     setFilteredTasks(filteredTasks)
-  }, [tasks, filterMode])
+  }, [tasks, filterMode, currentUserId])
 
   return (
     <div className="task-container">

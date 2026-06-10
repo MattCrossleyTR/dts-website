@@ -8,7 +8,7 @@ export function getAuthToken() {
 
 export function getAuthPayload() {
   const token = getAuthToken();
-  if (token == "null") {
+  if (token === "null") {
     return null
   }
 
@@ -43,7 +43,7 @@ export function calculatePasswordStrength(pwd) {
   if (/[a-z]/.test(pwd)) {
     score += 1;
   }
-  if (/[!"£$%^&*()[\]\\\/\.,<>#~;:'@|`¬¦+=_-]/.test(pwd)) {
+  if (/[!"£$%^&*()[\]\\/.,<>#~;:'@|`¬¦+=_-]/.test(pwd)) {
     score += 1;
   }
   // check for the amount of unique characters.

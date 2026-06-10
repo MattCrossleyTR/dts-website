@@ -54,7 +54,7 @@ export default function TaskPage() {
           })
           .catch((error) => console.error("Error fetching users:", error));
       });
-  }, [taskId]);
+  }, [taskId, auth?.sub]);
 
   function handleSubmit(e) {
     e.preventDefault();
