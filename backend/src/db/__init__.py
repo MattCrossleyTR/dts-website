@@ -16,16 +16,36 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
+_USER_SEED_NAMES = ['RogerF', 'RafaelN', 'AndyM', 'SerenaW', 'EmmaR', 'MariaS', 'NovacD', 'MadisonK', 'IgaSw', 'GaelM']
+_TASK_SEED_TITLES = [
+    'Put all eggs into one basket',
+    'Count chickens before they hatch',
+    'Put the cart before the horse',
+    'Wake the sleeping dog',
+    'Cross the bridge before getting to it',
+    'Make a mountain out of a molehill',
+    'Lambast the ocean',
+    'Throw stones from a glass house',
+    'Commit great acts of tomfoolery',
+    'Judge a book by its cover',
+    'Leap without looking'
+]
+
+
+def random_choice_excluding(choices: list, exceptions: list):
+    return choice([c for c in choices if c not in exceptions])
+
+
 def seed_data():
     with Session(engine) as session:
         users = list(session.exec(select(User)).all())
         while len(users) < 10:
-            random_number = randint(1, 1_000_000)
             user = User(
-                username=f"user{random_number}",
+                username=random_choice_excluding(_USER_SEED_NAMES, [u.username for u in users]),
                 id=uuid4(),
-                password=f"password{random_number}",
-                admin=random_number % 2 == 0,  # Randomly assign admin status
+                # these are just seeded users to make the app feel alive for testing. No need to hash pwd
+                password=''.join(chr(randint(0, 256)) for i in range(20)).encode(),
+                admin=randint(0, 1) == 0,  # Randomly assign admin status
             )
             session.add(user)
             users.append(user)
@@ -33,10 +53,11 @@ def seed_data():
         tasks = list(session.exec(select(Task)).all())
         while len(tasks) < 10:
             random_number = randint(1, 1_000_000)
+            task_title = random_choice_excluding(_TASK_SEED_TITLES, [t.title for t in tasks])
             task = Task(
-                title=f"Some task {random_number}",
+                title=task_title,
                 id=uuid4(),
-                description=f"This task was created with random number {random_number}",
+                description=f'Need to {task_title}',
                 assigned_to=choice(users).id,
                 created_by=choice(users).id,
                 completed=random_number % 2 == 0,

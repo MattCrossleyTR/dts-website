@@ -124,7 +124,7 @@ export default function TaskPage() {
         if (!taskId || taskId.length === 0) {
           navigate(`/task/${await response.json()}`);
         } else {
-          setTask(await response.json());
+          navigate('/')
         }
       });
     }
@@ -136,6 +136,7 @@ export default function TaskPage() {
 
   return (
     <div className="task-container">
+      <h1>{!taskId || taskId.length === 0 ? "Create" : "Edit"} Task</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">Title:</label>
