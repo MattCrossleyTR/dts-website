@@ -1,19 +1,12 @@
-FROM debian:13
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv
+FROM python:3.14-slim
 
 COPY backend /backend/
 RUN chmod -R 755 /backend/
 
 WORKDIR /backend
-RUN python3 -m venv .venv && \
-    . .venv/bin/activate && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
-EXPOSE 8000
+EXPOSE 10000
 
-ENTRYPOINT ["/backend/.venv/bin/python3"]
+ENTRYPOINT ["python"]
 CMD ["-m", "fastapi", "run", "src/main.py"]
