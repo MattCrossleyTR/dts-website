@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import { setAuth, calculatePasswordStrength } from "../utils/auth";
+import { BACKEND } from "../constants";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -26,7 +27,7 @@ export default function Register() {
         password: password,
         admin: isAdmin,
       }
-      const response = await fetch("http://localhost:8000/users/", {
+      const response = await fetch(`${BACKEND}/users/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

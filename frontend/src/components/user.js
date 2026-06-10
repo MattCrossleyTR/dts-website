@@ -1,3 +1,4 @@
+import { BACKEND } from "../constants";
 import { getAuthToken } from "../utils/auth";
 
 export default function User({ user }) {
@@ -5,7 +6,7 @@ export default function User({ user }) {
     if (
       window.confirm(`Are you sure you want to delete user ${user.username}?`)
     ) {
-      fetch(`http://localhost:8000/users/${user.id}`, {
+      fetch(`${BACKEND}/users/${user.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,

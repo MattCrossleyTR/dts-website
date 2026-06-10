@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { getAuthToken, setAuth } from "../utils/auth";
 import { useEffect, useState } from "react";
+import { BACKEND } from "../constants";
 
 export default function ProtectedRoute({ adminOnly = false, children }) {
   const location = useLocation();
@@ -50,7 +51,7 @@ async function checkAuth(location, token, adminOnly) {
     }
   }
 
-  const response = await fetch("http://localhost:8000/users/current", {
+  const response = await fetch(`${BACKEND}/users/current`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

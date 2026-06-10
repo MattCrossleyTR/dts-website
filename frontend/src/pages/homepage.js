@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAuthPayload, getAuthToken } from "../utils/auth";
 import Task from "../components/task";
 import "../styles/task.css";
+import { BACKEND } from "../constants";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
@@ -11,7 +12,7 @@ export default function HomePage() {
   const [filterMode, setFilterMode] = useState("all")
 
   useEffect(() => {
-    fetch("http://localhost:8000/tasks/", {
+    fetch(`${BACKEND}/tasks/`, {
       headers: {
         Authorization: `Bearer ${getAuthToken()}`,
       },

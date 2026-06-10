@@ -3,6 +3,7 @@ import { getAuthToken, getAuthPayload } from "../utils/auth";
 
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/task.css";
+import { BACKEND } from "../constants";
 
 export default function TaskPage() {
   const { taskId } = useParams();
@@ -27,7 +28,7 @@ export default function TaskPage() {
         });
       });
     } else {
-      request = fetch(`http://localhost:8000/tasks/${taskId}`, {
+      request = fetch(`${BACKEND}/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,
         },
@@ -41,7 +42,7 @@ export default function TaskPage() {
       })
       .catch((error) => console.error("Error fetching task:", error))
       .then((task) => {
-        fetch("http://localhost:8000/users/", {
+        fetch(`${BACKEND}/users/`, {
           headers: {
             Authorization: `Bearer ${getAuthToken()}`,
           },
@@ -63,7 +64,7 @@ export default function TaskPage() {
       if (!window.confirm("Are you sure you want to delete this task?")) {
         return;
       }
-      request = fetch(`http://localhost:8000/tasks/${taskId}`, {
+      request = fetch(`${BACKEND}/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,
@@ -87,7 +88,7 @@ export default function TaskPage() {
       });
     } else {
       if (!taskId || taskId.length === 0) {
-        request = fetch("http://localhost:8000/tasks/", {
+        request = fetch(`${BACKEND}/tasks/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +97,7 @@ export default function TaskPage() {
           body: JSON.stringify(task),
         });
       } else {
-        request = fetch(`http://localhost:8000/tasks/${taskId}`, {
+        request = fetch(`${BACKEND}/tasks/${taskId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

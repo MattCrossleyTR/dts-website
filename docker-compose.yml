@@ -1,6 +1,0 @@
-services:
-  web:
-    build: .
-    ports:
-      - "${PORT}:3000"
-      - "${PORT}:8000"

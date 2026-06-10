@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { getAuthToken } from "../utils/auth";
 import User from "../components/user";
+import { BACKEND } from "../constants";
 
 export default function UserPage() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/users/", {
+    fetch(`${BACKEND}/users/`, {
       headers: {
         Authorization: `Bearer ${getAuthToken()}`,
       },

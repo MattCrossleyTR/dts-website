@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import { setAuth } from "../utils/auth";
+import { BACKEND } from "../constants";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -15,7 +16,7 @@ export default function Login() {
       const body = new URLSearchParams();
       body.append('username', username)
       body.append('password', password)
-      const response = await fetch("http://localhost:8000/token", {
+      const response = await fetch(`${BACKEND}/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
