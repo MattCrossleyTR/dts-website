@@ -4,8 +4,8 @@ on:
   push:
     paths:
       - backend/**
-      - Dockerfile-backend
       - .github/**
+      - render.yml
   workflow_dispatch:
 
 jobs:
