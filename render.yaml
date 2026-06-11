@@ -20,4 +20,4 @@ projects:
         - key: DEPLOY_ENV
           value: prod
         - key: FRONTEND_ORIGIN
-          value: https://mattcrossleytr.github.io/dts-website
+          value: https://mattcrossleytr.github.io
