@@ -19,21 +19,32 @@ handler.setFormatter(
 )
 logger.addHandler(handler)
 
-
-app = FastAPI(
-    debug=True,
-    title="TODO-Backend",
-    description="Backend for TODO app",
-    version="0.1.0",
-)
-
 ENV = os.environ.get('DEPLOY_ENV', 'dev')
+
+config: dict
 if ENV == 'dev':
     origins = ['*']  # set to all for dev purposes
+    config = {
+        'debug': True
+    }
 else:
     FRONTEND_ORIGIN = os.environ.get('FRONTEND_ORIGIN')
     assert FRONTEND_ORIGIN is not None, 'frontend origin must be specified for non-dev envs'
     origins = [FRONTEND_ORIGIN]
+    config = {
+        'debug': False,
+        'docs_url': None,
+        'redoc_url': None,
+        'openapi_url': None
+    }
+
+
+app = FastAPI(
+    title="TODO-Backend",
+    description="Backend for TODO app",
+    version="0.1.0",
+    **config
+)
 
 app.add_middleware(
     CORSMiddleware,
