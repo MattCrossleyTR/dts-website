@@ -1,6 +1,6 @@
 FROM python:3.14-slim
 
-COPY backend /backend/
+COPY ./ /backend/
 RUN chmod -R 755 /backend/
 
 WORKDIR /backend
