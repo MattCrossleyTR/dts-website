@@ -5,7 +5,7 @@ on:
     paths:
       - backend/**
       - Dockerfile-backend
-      - .github
+      - .github/**
   workflow_dispatch:
 
 jobs:
