@@ -6,8 +6,6 @@ on:
 
 jobs:
   build:
-    environment:
-      name: gh-pages-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
