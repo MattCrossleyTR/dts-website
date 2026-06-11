@@ -1,0 +1,24 @@
+name: Deploy Backend
+
+on:
+  push:
+    paths:
+      - backend/**
+      - Dockerfile-backend
+      - .github
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: ./.github/workflows/tests.yaml
+
+  deploy:
+    needs: test
+    environment:
+      name: build-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        run: curl -X POST "$RENDER_DEPLOY_HOOK"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
