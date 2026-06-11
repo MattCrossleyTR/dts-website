@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/tests.yaml
+    uses: ./.github/workflows/tests.yml
 
   deploy:
     needs: test
