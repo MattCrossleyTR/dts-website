@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 import "./styles/app.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/navbar";

@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router";
 import { getAuthToken, setAuth } from "../utils/auth";
 import { useEffect, useState } from "react";
 import { BACKEND } from "../constants";
@@ -33,17 +33,28 @@ export default function ProtectedRoute({ adminOnly = false, children }) {
   return children;
 }
 
-async function checkAuth(urlPath, token, adminOnly) {
+export async function checkAuth(urlPath, token, adminOnly) {
   // no auth and not on login screen, send to login screen
   if (!token && urlPath !== "/login") {
     return {
       msg: null,
       path: '/login'
     }
-    // return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If authenticated and on login page, redirect to home
+  if (urlPath === "/login") {
+    if (token) {
+      // If authenticated and on login page, redirect to home
+      return {
+        msg: null,
+        path: '/'
+      }
+    } else {
+      // not authenticated but on the login screen - do nothing
+      return { auth: false }
+    }
+
+  }
   if (token && urlPath === "/login") {
     return {
       msg: null,

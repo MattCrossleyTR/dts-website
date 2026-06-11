@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAuthToken, getAuthPayload } from "../utils/auth";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import "../styles/task.css";
 import { BACKEND } from "../constants";
 
