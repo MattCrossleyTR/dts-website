@@ -8,6 +8,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Node 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm i
+      - name: Test
+        run: |
+          cd frontend
+          npm run test
+
   build:
     environment:
       name: build-frontend
@@ -35,7 +52,7 @@ jobs:
           path: frontend/build
 
   deploy:
-    needs: build
+    needs: [tests, build]
     permissions:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
