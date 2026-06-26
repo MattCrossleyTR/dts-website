@@ -2,7 +2,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 import pytest
 from fastapi.exceptions import HTTPException
 from mocks import MockSessionOrTable
-from backend.src.auth import auth_check, ALGORITHM, SECRET_KEY, login
+from src.auth import auth_check, ALGORITHM, SECRET_KEY, login
 import jwt
 from uuid import uuid4
 

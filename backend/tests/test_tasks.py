@@ -2,6 +2,8 @@ from uuid import uuid4
 from fastapi import HTTPException
 import pytest
 from pytest_mock import MockerFixture
+# import auth first to get around circular import issue
+import src.auth  # noqa: F401
 from src.db.models import Task, User
 from src.tasks import api
 from mocks import MockSessionOrTable
