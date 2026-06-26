@@ -59,7 +59,7 @@ def seed_data():
                 password=hash_password('admin123'),
                 admin=True
             ))
-        if not session.exec(select(User).where(User.username == 'user')).one_or_none():
+        if not session.exec(select(User).where(User.username == 'user1')).one_or_none():
             session.add(User(
                 username='user1',
                 id=uuid4(),

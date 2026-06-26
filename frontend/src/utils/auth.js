@@ -22,7 +22,7 @@ export function getAuthPayload() {
 }
 
 export function clearAuth() {
-  window.localStorage.removeItem("user");
+  window.localStorage.removeItem("token");
 }
 
 export function calculatePasswordStrength(pwd) {
