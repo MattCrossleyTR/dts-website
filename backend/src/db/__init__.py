@@ -8,6 +8,7 @@ from fastapi import Depends
 from sqlmodel import Session, SQLModel, create_engine, select
 
 from .models import Task, User
+from ..auth.common import hash_password
 
 engine = create_engine("sqlite:///database.db")
 
@@ -43,12 +44,29 @@ def seed_data():
             user = User(
                 username=random_choice_excluding(_USER_SEED_NAMES, [u.username for u in users]),
                 id=uuid4(),
-                # these are just seeded users to make the app feel alive for testing. No need to hash pwd
-                password=''.join(chr(randint(0, 256)) for i in range(20)).encode(),
+                password=hash_password(''.join(chr(randint(0, 256)) for i in range(20))),
                 admin=randint(0, 1) == 0,  # Randomly assign admin status
             )
             session.add(user)
             users.append(user)
+
+        # Testing purposes only: seed 2 standard users with set credentials for the sake of assessor
+        if not session.exec(select(User).where(User.username == 'admin')).one_or_none():
+            session.add(User(
+                username='admin',
+                id=uuid4(),
+                # use simple password for testing purposes, not for real life usage
+                password=hash_password('admin123'),
+                admin=True
+            ))
+        if not session.exec(select(User).where(User.username == 'user')).one_or_none():
+            session.add(User(
+                username='user1',
+                id=uuid4(),
+                # use simple password for testing purposes, not for real life usage
+                password=hash_password('user123'),
+                admin=False
+            ))
 
         tasks = list(session.exec(select(Task)).all())
         while len(tasks) < 10:

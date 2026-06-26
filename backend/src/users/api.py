@@ -1,6 +1,7 @@
 import logging
 
-from ..auth import AuthCheckDep, create_token, hash_password
+from ..auth import AuthCheckDep, create_token
+from ..auth.common import hash_password
 from ..db import DBSessionDep
 from ..db.models import User, UserCreate, UserPublic, UserUpdate
 from fastapi import APIRouter, HTTPException

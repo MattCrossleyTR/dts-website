@@ -1,8 +1,5 @@
 import collections
-import hashlib
 import logging
-import os
-import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from uuid import UUID
@@ -12,21 +9,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import select
 
-from .db import DBSessionDep
-from .db.models import User
+from ..db import DBSessionDep
+from ..db.models import User
+from .common import ALGORITHM, SECRET_KEY, verify_password, TOKEN_EXPIRY_MINUTES
 
 logger = logging.getLogger(__name__)
 security = OAuth2PasswordBearer(tokenUrl="token")
 router = APIRouter(tags=["auth"])
-
-# injected from env file
-SECRET_KEY = os.environ['DB_SECRET_KEY'].encode()
-# assert on length, this guards against the key being missing if the injection fails, etc
-assert len(SECRET_KEY) > 25, 'secret key either missing or too short'
-ALGORITHM = "HS256"
-TOKEN_EXPIRY_MINUTES = 60
-# generated with openssl
-PEPPER = '9aa8fc47a0fe5fbdb4b089fe4a15006fc75ee36e0de2bb5f40cd29820d8823cd'
 
 
 def create_token(user: User):
@@ -39,18 +28,6 @@ def create_token(user: User):
         minutes=TOKEN_EXPIRY_MINUTES
     )
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-
-def hash_password(password: str, salt: bytes | None = None):
-    if salt is None:
-        salt = secrets.token_bytes(32)
-    hashed = hashlib.pbkdf2_hmac('sha256', password.encode() + PEPPER.encode(), salt, 600_000)
-    return salt + hashed
-
-
-def verify_password(user: User, password: str):
-    salt = user.password[:32]
-    return hash_password(password, salt) == user.password
 
 
 @router.post("/token")
