@@ -1,6 +1,7 @@
 import collections
 import hashlib
 import logging
+import os
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
@@ -18,9 +19,10 @@ logger = logging.getLogger(__name__)
 security = OAuth2PasswordBearer(tokenUrl="token")
 router = APIRouter(tags=["auth"])
 
-# randomly generated on boot, so if backend crashes users get logged out, and so I don't have to manage
-# injecting secrets from a secure source
-SECRET_KEY = secrets.token_bytes(32)
+# injected from env file
+SECRET_KEY = os.environ['DB_SECRET_KEY'].encode()
+# assert on length, this guards against the key being missing if the injection fails, etc
+assert len(SECRET_KEY) > 25, 'secret key either missing or too short'
 ALGORITHM = "HS256"
 TOKEN_EXPIRY_MINUTES = 60
 # generated with openssl

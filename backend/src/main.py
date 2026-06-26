@@ -2,12 +2,18 @@ import logging
 import os
 import sys
 
-from .auth import auth_check, router as auth_router
-from .db import startup as db_startup
+
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .tasks.api import router as tasks_router
-from .users.api import router as users_router
+
+from dotenv import load_dotenv
+load_dotenv()
+
+from .auth import auth_check  # noqa: E402
+from .auth import router as auth_router  # noqa: E402
+from .db import startup as db_startup  # noqa: E402
+from .tasks.api import router as tasks_router  # noqa: E402
+from .users.api import router as users_router  # noqa: E402
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
